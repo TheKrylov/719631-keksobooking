@@ -37,14 +37,11 @@
 
   // Array shuffle
   function shuffleArray(array) {
-    var y;
-    var z;
-    var v;
-    for (v = array.length - 1; v > 0; v--) {
-      y = Math.floor(Math.random() * (v + 1));
-      z = array[v];
-      array[v] = array[y];
-      array[y] = z;
+    for (var i = array.length - 1, j, k; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      k = array[i];
+      array[i] = array[j];
+      array[j] = k;
     }
     return array;
   }
@@ -115,17 +112,14 @@
   };
 
   // Create pins
-
-  var createPins = function () {
-
-    for (var i = 0; i < 8; i++) {
-      pins.push(data[i]);
-    }
-
+  var createPins = function (count) {
     var fragmentPin = document.createDocumentFragment();
-    for (var j = 0; j < pins.length; j++) {
-      fragmentPin.appendChild(renderPin(pins[j]));
+
+    for (var i = 0; i < count; i++) {
+      pins.push(data[i]);
+      fragmentPin.appendChild(renderPin(data[i]));
     }
+
     mapPins.appendChild(fragmentPin);
   };
 
@@ -189,7 +183,7 @@
   showMap();
 
   // Create Pins
-  createPins();
+  createPins(8);
 
   // Show card
   showCard();
