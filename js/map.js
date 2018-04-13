@@ -46,20 +46,12 @@
     return array;
   }
 
+  // Randomize Features
   function getRandomFeature(array) {
-    var clone = Object.create(array);
-    var features = [];
-    var maxFeatures = getRandomInt(1, clone.length);
-
-    for (var x = 0; x < maxFeatures; x++) {
-      var featureItem = getRandom(clone);
-      var elementIndex = array.indexOf(featureItem);
-      clone.splice(elementIndex, 1);
-      features.push(featureItem);
-    }
+    var features = shuffleArray(array.slice());
+    features.length = getRandomInt(1, array.length);
     return features;
   }
-
 
   // Create data
   var createData = function (count) {
