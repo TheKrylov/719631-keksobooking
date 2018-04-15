@@ -22,6 +22,12 @@
   var mapPin = pinTemplate.content.querySelector('.map__pin');
   var mapCard = pinTemplate.content.querySelector('.map__card');
 
+  var mapPinMain = userMap.querySelector('.map__pin--main');
+
+  var adForm = document.querySelector('.ad-form');
+  var adAddress = adForm.querySelector('#address');
+  var adFormFieldset = adForm.querySelectorAll('fieldset');
+
   var pins = [];
 
 
@@ -33,6 +39,14 @@
   // Get Random int
   var getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  // Enable fieldsets
+  var setElementEnabled = function (nodeList) {
+    for (var i = 0; i < nodeList.length; i++) {
+      nodeList[i].disabled = false;
+    }
+    return true;
   };
 
   // Array shuffle
@@ -100,6 +114,11 @@
     element.querySelector('img').src = pin.author.avatar;
     element.querySelector('img').alt = pin.offer.title;
 
+    // add open event
+    element.addEventListener('click', function () {
+      renderCard(pin);
+    });
+
     return element;
   };
 
@@ -115,9 +134,19 @@
     mapPins.appendChild(fragmentPin);
   };
 
+  var setAddress = function () {
+    adAddress.value = mapPinMain.style.left.slice(0, -2) + ', ' + mapPinMain.style.top.slice(0, -2);
+  };
 
-  var fillCard = function (pin) {
+  // Render card
+  var renderCard = function (pin) {
+
+    deleteCard();
+
+    userMap.insertBefore(mapCard.cloneNode(true), mapContainer);
+
     var element = userMap.querySelector('.map__card');
+
 
     element.querySelector('.popup__title').textContent = pin.offer.title;
     element.querySelector('.popup__text--address').textContent = '';
@@ -153,6 +182,21 @@
     cardImages.appendChild(fragmentPinImages);
 
     element.querySelector('.popup__avatar').src = pin.author.avatar;
+
+    // add close event
+    var close = element.querySelector('.popup__close');
+    close.addEventListener('click', function () {
+      deleteCard();
+    });
+
+  };
+
+  // Delete card
+  var deleteCard = function () {
+    var el = userMap.querySelector('.map__card');
+    if (el) {
+      el.parentNode.removeChild(el);
+    }
   };
 
   // Show map
@@ -160,25 +204,25 @@
     userMap.classList.remove('map--faded');
   };
 
-  var showCard = function () {
-    userMap.insertBefore(mapCard.cloneNode(true), mapContainer);
-    fillCard(pins[0]);
+  // Show AD form
+  var showAD = function () {
+    adForm.classList.remove('ad-form--disabled');
+    setElementEnabled(adFormFieldset);
   };
+
+  // Event handlers
+  mapPinMain.addEventListener('mouseup', function () {
+    showMap();
+    createPins(8);
+    showAD();
+    setAddress();
+  });
 
 
   // ---- Start ----- //
 
   // Generate data
   var data = createData(8);
-
-  // Show map
-  showMap();
-
-  // Create Pins
-  createPins(8);
-
-  // Show card
-  showCard();
 
 
 })();
