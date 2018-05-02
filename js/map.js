@@ -34,7 +34,15 @@
   var adFormTimeIn = adForm.querySelector('#timein');
   var adFormTimeOut = adForm.querySelector('#timeout');
 
+  var startCoords;
   var pins = [];
+
+  var moveLimits = {
+    top: userMap.offsetTop + 150,
+    right: userMap.offsetWidth - 65,
+    bottom: userMap.offsetTop + 500,
+    left: 0
+  };
 
   var settings = {
     roomPrice: {
@@ -315,7 +323,7 @@
     showMap();
     createPins(8);
     showAD();
-    setAddress();
+
   });
 
   adFormRoomNumber.addEventListener('change', function () {
@@ -329,6 +337,59 @@
   adFormTimeIn.addEventListener('change', timeChangeHanlder);
   adFormTimeOut.addEventListener('change', timeChangeHanlder);
 
+
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    document.addEventListener('mousemove', pinMoveHandler);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  var onMouseUp = function (evt) {
+    evt.preventDefault();
+    setAddress();
+    document.removeEventListener('mousemove', pinMoveHandler);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  var pinMoveHandler = function (evt) {
+    evt.preventDefault();
+    var shift = {
+      x: startCoords.x - evt.clientX,
+      y: startCoords.y - evt.clientY
+    };
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var pinPosition = {
+      top: mapPinMain.offsetTop - shift.y,
+      left: mapPinMain.offsetLeft - shift.x
+    };
+
+    mapPinMain.style.left = mapPinMain.offsetLeft - shift.x + 'px';
+
+    if (pinPosition.left < moveLimits.left) {
+      mapPinMain.style.left = moveLimits.left + 'px';
+    } else if (pinPosition.left > moveLimits.right) {
+      mapPinMain.style.left = moveLimits.right + 'px';
+    }
+
+    mapPinMain.style.top = (pinPosition.top) + 'px';
+
+    if (pinPosition.top > moveLimits.bottom) {
+      mapPinMain.style.top = moveLimits.bottom + 'px';
+    } else if (pinPosition.top < moveLimits.top) {
+      mapPinMain.style.top = moveLimits.top + 'px';
+    }
+
+    setAddress();
+  };
 
   // ---- Start ----- //
 
